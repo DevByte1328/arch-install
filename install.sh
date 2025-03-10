@@ -68,11 +68,17 @@ arch-chroot /mnt /bin/bash <<EOF
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
   pacman -S --noconfirm lightdm lightdm-gtk-greeter
+  # Configure LightDM for auto-login
+  mkdir -p /etc/lightdm
+  echo "[Seat:*]" > /etc/lightdm/lightdm.conf
+  echo "autologin-user=main" >> /etc/lightdm/lightdm.conf
+  echo "autologin-user-timeout=0" >> /etc/lightdm/lightdm.conf
   sed -i 's/#greeter-session=.*/greeter-session=lightdm-gtk-greeter/' /etc/lightdm/lightdm.conf
   systemctl enable lightdm
   pacman -S --noconfirm xfce4 xfce4-goodies
 
   # Create password setup script on user's desktop
+  mkdir -p /home/main/Desktop
   cat > /home/main/Desktop/set_passwords.sh <<'SCRIPT'
 #!/bin/bash
 

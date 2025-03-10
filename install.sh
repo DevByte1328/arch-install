@@ -56,52 +56,25 @@ arch-chroot /mnt /bin/bash <<EOF
   # Enable NetworkManager
   systemctl enable NetworkManager
 
-  # Create user 'main' and allow passwordless login
+  # Create user 'main'
   useradd -m -G wheel main
-  passwd -d main  # Delete password (sets it to empty, allowing login without one)
 
   # Uncomment wheel group in sudoers
   sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
+  # Set passwords non-interactively to '1'
+  echo "main:1" | chpasswd
+  echo "root:1" | chpasswd
+
   # Install display driver (placeholder, adjust as needed)
-  pacman -S --noconfirm xf86-video-vmware
+  pacman -S --noconfirm xf86-video-vmware  # You mentioned this might be it; replace if incorrect
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
-  pacman -S --noconfirm nodm xfce4 xfce4-goodies
-  # Configure NODM for auto-login as 'main'
-  echo "NODM_ENABLED=true" > /etc/nodm.conf
-  echo "NODM_USER=main" >> /etc/nodm.conf
-  echo "NODM_XSESSION=/usr/bin/startxfce4" >> /etc/nodm.conf
-  systemctl enable nodm
-
-  # Set default boot target to graphical
-  systemctl set-default graphical.target
-
-  # Create password setup script on user's desktop
-  mkdir -p /home/main/Desktop
-  cat > /home/main/Desktop/set_passwords.sh <<'SCRIPT'
-#!/bin/bash
-
-if [ "\$EUID" -ne 0 ]; then
-  echo "Please run this script with sudo or as root"
-  exit 1
-fi
-
-echo "Setting password for user 'main':"
-passwd main
-
-echo "Setting root password:"
-passwd root
-
-echo "Passwords set successfully!"
-echo "You may want to delete this script now for security:"
-echo "sudo rm /home/main/Desktop/set_passwords.sh"
-SCRIPT
-
-  # Set ownership and make executable
-  chown main:main /home/main/Desktop/set_passwords.sh
-  chmod +x /home/main/Desktop/set_passwords.sh
+  pacman -S --noconfirm lightdm lightdm-gtk-greeter
+  sed -i 's/#greeter-session=.*/greeter-session=lightdm-gtk-greeter/' /etc/lightdm/lightdm.conf
+  systemctl enable lightdm
+  pacman -S --noconfirm xfce4 xfce4-goodies
 EOF
 
 # Unmount and reboot

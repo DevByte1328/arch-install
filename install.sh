@@ -56,20 +56,14 @@ arch-chroot /mnt /bin/bash <<EOF
   # Enable NetworkManager
   systemctl enable NetworkManager
 
-  # Create user 'main'
+  # Create user 'main' without password
   useradd -m -G wheel main
 
   # Uncomment wheel group in sudoers
   sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
-  # Set passwords (will prompt interactively)
-  echo "Set password for user 'main':"
-  passwd main
-  echo "Set root password:"
-  passwd root
-
   # Install display driver (placeholder, adjust as needed)
-  pacman -S --noconfirm xf86-video-vmware  # You mentioned this might be it; replace if incorrect
+  pacman -S --noconfirm xf86-video-vmware
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
@@ -77,6 +71,30 @@ arch-chroot /mnt /bin/bash <<EOF
   sed -i 's/#greeter-session=.*/greeter-session=lightdm-gtk-greeter/' /etc/lightdm/lightdm.conf
   systemctl enable lightdm
   pacman -S --noconfirm xfce4 xfce4-goodies
+
+  # Create password setup script on user's desktop
+  cat > /home/main/Desktop/set_passwords.sh <<'SCRIPT'
+#!/bin/bash
+
+if [ "\$EUID" -ne 0 ]; then
+  echo "Please run this script with sudo or as root"
+  exit 1
+fi
+
+echo "Setting password for user 'main':"
+passwd main
+
+echo "Setting root password:"
+passwd root
+
+echo "Passwords set successfully!"
+echo "You may want to delete this script now for security:"
+echo "sudo rm /home/main/Desktop/set_passwords.sh"
+SCRIPT
+
+  # Set ownership and make executable
+  chown main:main /home/main/Desktop/set_passwords.sh
+  chmod +x /home/main/Desktop/set_passwords.sh
 EOF
 
 # Unmount and reboot

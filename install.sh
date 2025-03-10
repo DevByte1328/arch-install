@@ -56,8 +56,9 @@ arch-chroot /mnt /bin/bash <<EOF
   # Enable NetworkManager
   systemctl enable NetworkManager
 
-  # Create user 'main' without password
+  # Create user 'main' and allow passwordless login
   useradd -m -G wheel main
+  passwd -d main  # Delete password (sets it to empty, allowing login without one)
 
   # Uncomment wheel group in sudoers
   sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
@@ -67,13 +68,15 @@ arch-chroot /mnt /bin/bash <<EOF
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
-  # Replace LightDM with NODM
   pacman -S --noconfirm nodm xfce4 xfce4-goodies
   # Configure NODM for auto-login as 'main'
   echo "NODM_ENABLED=true" > /etc/nodm.conf
   echo "NODM_USER=main" >> /etc/nodm.conf
   echo "NODM_XSESSION=/usr/bin/startxfce4" >> /etc/nodm.conf
   systemctl enable nodm
+
+  # Set default boot target to graphical
+  systemctl set-default graphical.target
 
   # Create password setup script on user's desktop
   mkdir -p /home/main/Desktop

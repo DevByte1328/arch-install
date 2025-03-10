@@ -71,10 +71,9 @@ arch-chroot /mnt /bin/bash <<EOF
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
-  pacman -S --noconfirm lightdm lightdm-gtk-greeter
-  sed -i 's/#greeter-session=.*/greeter-session=lightdm-gtk-greeter/' /etc/lightdm/lightdm.conf
-  systemctl enable lightdm
-  pacman -S --noconfirm xfce4 xfce4-goodies
+  pacman -S --noconfirm sddm plasma kde-applications
+  systemctl enable sddm
+
 EOF
 
 # Unmount and reboot

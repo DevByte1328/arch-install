@@ -23,7 +23,7 @@ mkfs.ext4 /dev/sda2
 mount /dev/sda2 /mnt
 
 # Install base system
-pacstrap /mnt base linux linux-firmware nano
+pacstrap /mnt base linux linux-firmware
 
 # Generate fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -71,7 +71,7 @@ arch-chroot /mnt /bin/bash <<EOF
   pacman -S --noconfirm xf86-video-vmware
 
   # Install Xorg and desktop environment
-  pacman -S --noconfirm xorg sddm plasma konsole dolphin firefox
+  pacman -S --noconfirm xorg sddm plasma konsole nano gedit dolphin firefox
   pacman -R --noconfirm plasma-welcome discover
   systemctl enable sddm
 

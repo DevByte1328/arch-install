@@ -98,28 +98,6 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 KEYBOARD
-
-  # Unpin all applications from the Plasma Task Manager for user 'main'
-  # Create the config directory for the user
-  mkdir -p /home/main/.config
-  chown main:main /home/main/.config
-
-  # Copy the default Plasma config and modify it to remove pinned apps
-  # The Task Manager settings are stored in plasma-org.kde.plasma.desktop-appletsrc
-  cat << 'PLASMA' > /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc
-[Containments][1]
-formfactor=2
-immutability=1
-location=4
-plugin=org.kde.panel
-
-[Containments][1][Applets][2]
-immutability=1
-plugin=org.kde.plasma.taskmanager
-PLASMA
-
-  # Set ownership of the config file
-  chown main:main /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc
 EOF
 
 # Unmount and reboot

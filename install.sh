@@ -72,7 +72,7 @@ arch-chroot /mnt /bin/bash <<EOF
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
-  pacman -S --noconfirm sddm plasma
+  pacman -S --noconfirm sddm plasma dolphin firefox
   pacman -R --noconfirm plasma-welcome
   pacman -R --noconfirm discover
   systemctl enable sddm

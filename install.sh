@@ -96,6 +96,12 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 KEYBOARD
+
+  # Create .config directory for user 'main' and download config files
+  mkdir -p /home/main/.config
+  curl -o /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/plasma-org.kde.plasma.desktop-appletsrc
+  curl -o /home/main/.config/plasmashellrc https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/plasmashellrc
+  chown -R main:main /home/main/.config
 EOF
 
 # Unmount and reboot

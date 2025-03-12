@@ -98,6 +98,25 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 KEYBOARD
+
+  # Modify Plasma configuration files for user 'main'
+  # Ensure .config directory exists
+  mkdir -p /home/main/.config
+
+  # Modify plasma-org.kde.plasma.desktop-appletsrc
+  cat << 'PLASMA_APPLETS' > /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc
+[Containments][1][Applets][2][Configuration]
+launchers=
+PLASMA_APPLETS
+
+  # Modify plasmashellrc
+  cat << 'PLASMASHELL' > /home/main/.config/plasmashellrc
+[PlasmaViews][Panel 2][Defaults]
+floating=0
+PLASMASHELL
+
+  # Set correct ownership for the config files
+  chown -R main:main /home/main/.config
 EOF
 
 # Unmount and reboot

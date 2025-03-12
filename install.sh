@@ -44,7 +44,7 @@ arch-chroot /mnt /bin/bash <<EOF
   mkinitcpio -P
 
   # Install additional packages
-  pacman -S --noconfirm grub base-devel efibootmgr os-prober mtools dosfstools linux-headers networkmanager nm-connection-editor pipewire pipewire-pulse pipewire-alsa pavucontrol dialog konsole
+  pacman -S --noconfirm grub base-devel efibootmgr os-prober mtools dosfstools linux-headers networkmanager nm-connection-editor pipewire pipewire-pulse pipewire-alsa pavucontrol dialog
 
   # Mount EFI partition
   mkdir /boot/EFI
@@ -71,10 +71,8 @@ arch-chroot /mnt /bin/bash <<EOF
   pacman -S --noconfirm xf86-video-vmware
 
   # Install Xorg and desktop environment
-  pacman -S --noconfirm xorg
-  pacman -S --noconfirm sddm plasma
-  pacman -R --noconfirm plasma-welcome
-  pacman -R --noconfirm discover
+  pacman -S --noconfirm xorg sddm plasma konsole dolphin firefox
+  pacman -R --noconfirm plasma-welcome discover
   systemctl enable sddm
 
   # Configure SDDM autologin
@@ -99,24 +97,8 @@ Section "InputClass"
 EndSection
 KEYBOARD
 
-  # Modify Plasma configuration files for user 'main'
-  # Ensure .config directory exists
-  mkdir -p /home/main/.config
-
-  # Modify plasma-org.kde.plasma.desktop-appletsrc
-  cat << 'PLASMA_APPLETS' > /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc
-[Containments][1][Applets][2][Configuration]
-launchers=
-PLASMA_APPLETS
-
-  # Modify plasmashellrc
-  cat << 'PLASMASHELL' > /home/main/.config/plasmashellrc
-[PlasmaViews][Panel 2][Defaults]
-floating=0
-PLASMASHELL
-
-  # Set correct ownership for the config files
-  chown -R main:main /home/main/.config
+  # Clear Plasma launchers for user 'main'
+  sed -i 's/^launchers=.*/launchers=/' /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc
 EOF
 
 # Unmount and reboot

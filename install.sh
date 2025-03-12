@@ -34,10 +34,11 @@ arch-chroot /mnt /bin/bash <<EOF
   ln -sf /usr/share/zoneinfo/Israel /etc/localtime
   hwclock --systohc
 
-  # Locale
+  # Locale - Enable both en_US.UTF-8 and he_IL.UTF-8
   sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+  sed -i 's/#he_IL.UTF-8/he_IL.UTF-8/' /etc/locale.gen
   locale-gen
-  echo "LANG=en_US.UTF-8" > /etc/locale.conf
+  echo "LANG=en_US.UTF-8" > /etc/locale.conf  # Default language remains English
 
   # Initramfs
   mkinitcpio -P
@@ -67,12 +68,26 @@ arch-chroot /mnt /bin/bash <<EOF
   echo "root:1" | chpasswd
 
   # Install display driver (placeholder, adjust as needed)
-  pacman -S --noconfirm xf86-video-vmware  # You mentioned this might be it; replace if incorrect
+  pacman -S --noconfirm xf86-video-vmware  # Replace if incorrect
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
   pacman -S --noconfirm sddm plasma kde-applications
   systemctl enable sddm
+
+  # Set keyboard layout for console (English and Hebrew)
+  echo "KEYMAP=us" > /etc/vconsole.conf
+  echo "FONT=lat2-16" >> /etc/vconsole.conf  # Optional: Adjust font if needed
+
+  # Set X11 keyboard layout to include English and Hebrew
+  cat << 'KEYBOARD' > /etc/X11/xorg.conf.d/00-keyboard.conf
+Section "InputClass"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    Option "XkbLayout" "us,il"
+    Option "XkbOptions" "grp:alt_shift_toggle"
+EndSection
+KEYBOARD
 
 EOF
 

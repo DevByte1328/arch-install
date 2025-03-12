@@ -96,9 +96,6 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 KEYBOARD
-
-  # Clear Plasma launchers for user 'main'
-  sed -i 's/^launchers=.*/launchers=/' /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc
 EOF
 
 # Unmount and reboot

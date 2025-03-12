@@ -44,7 +44,7 @@ arch-chroot /mnt /bin/bash <<EOF
   mkinitcpio -P
 
   # Install additional packages
-  pacman -S --noconfirm grub base-devel efibootmgr os-prober mtools dosfstools linux-headers networkmanager nm-connection-editor pipewire pipewire-pulse pipewire-alsa pavucontrol dialog
+  pacman -S --noconfirm grub base-devel efibootmgr os-prober mtools dosfstools linux-headers networkmanager nm-connection-editor pipewire pipewire-pulse pipewire-alsa pavucontrol dialog konsole
 
   # Mount EFI partition
   mkdir /boot/EFI
@@ -71,8 +71,10 @@ arch-chroot /mnt /bin/bash <<EOF
   pacman -S --noconfirm xf86-video-vmware
 
   # Install Xorg and desktop environment
-  pacman -S --noconfirm xorg sddm plasma konsole dolphin firefox
-  pacman -R --noconfirm plasma-welcome discover
+  pacman -S --noconfirm xorg
+  pacman -S --noconfirm sddm plasma
+  pacman -R --noconfirm plasma-welcome
+  pacman -R --noconfirm discover
   systemctl enable sddm
 
   # Configure SDDM autologin

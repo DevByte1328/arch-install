@@ -38,13 +38,13 @@ arch-chroot /mnt /bin/bash <<EOF
   sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
   sed -i 's/#he_IL.UTF-8/he_IL.UTF-8/' /etc/locale.gen
   locale-gen
-  echo "LANG=en_US.UTF-8" > /etc/locale.conf  # Default language remains English
+  echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
   # Initramfs
   mkinitcpio -P
 
   # Install additional packages
-  pacman -S --noconfirm grub base-devel efibootmgr os-prober mtools dosfstools linux-headers networkmanager nm-connection-editor pulseaudio pavucontrol dialog
+  pacman -S --noconfirm grub base-devel efibootmgr os-prober mtools dosfstools linux-headers networkmanager nm-connection-editor pipewire pipewire-pulse pipewire-alsa pavucontrol dialog
 
   # Mount EFI partition
   mkdir /boot/EFI
@@ -59,27 +59,35 @@ arch-chroot /mnt /bin/bash <<EOF
 
   # Create user 'main'
   useradd -m -G wheel main
+  passwd -d main  # Remove password for 'main'
 
-  # Uncomment wheel group in sudoers
-  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
+  # Uncomment wheel group in sudoers with NOPASSWD (optional)
+  sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) NOPASSWD: ALL/' /etc/sudoers
 
-  # Set passwords non-interactively to '1'
-  echo "main:1" | chpasswd
+  # Set root password (keep it for safety)
   echo "root:1" | chpasswd
 
-  # Install display driver (placeholder, adjust as needed)
-  pacman -S --noconfirm xf86-video-vmware  # Replace if incorrect
+  # Install display driver (adjust as needed)
+  pacman -S --noconfirm xf86-video-vmware
 
   # Install Xorg and desktop environment
   pacman -S --noconfirm xorg
-  pacman -S --noconfirm sddm plasma kde-applications
+  pacman -S --noconfirm sddm plasma
   systemctl enable sddm
 
-  # Set keyboard layout for console (English and Hebrew)
-  echo "KEYMAP=us" > /etc/vconsole.conf
-  echo "FONT=lat2-16" >> /etc/vconsole.conf  # Optional: Adjust font if needed
+  # Configure SDDM autologin
+  mkdir -p /etc/sddm.conf.d
+  cat << 'SDDM' > /etc/sddm.conf.d/autologin.conf
+[Autologin]
+User=main
+Session=plasma.desktop
+SDDM
 
-  # Set X11 keyboard layout to include English and Hebrew
+  # Set keyboard layout for console
+  echo "KEYMAP=us" > /etc/vconsole.conf
+  echo "FONT=lat2-16" >> /etc/vconsole.conf
+
+  # Set X11 keyboard layout
   cat << 'KEYBOARD' > /etc/X11/xorg.conf.d/00-keyboard.conf
 Section "InputClass"
     Identifier "system-keyboard"
@@ -88,7 +96,6 @@ Section "InputClass"
     Option "XkbOptions" "grp:alt_shift_toggle"
 EndSection
 KEYBOARD
-
 EOF
 
 # Unmount and reboot

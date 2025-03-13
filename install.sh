@@ -102,6 +102,7 @@ KEYBOARD
   curl -o /home/main/.config/plasma-org.kde.plasma.desktop-appletsrc https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/conf/plasma-org.kde.plasma.desktop-appletsrc
   curl -o /home/main/.config/plasmashellrc https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/conf/plasmashellrc
   curl -o /home/main/.config/menus/applications-kmenuedit.menu https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/conf/applications-kmenuedit.menu
+  curl -o /home/main/.config/kactivitymanagerd-statsrc https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/conf/kactivitymanagerd-statsrc
   chown -R main:main /home/main/.config
   mkdir -p /usr/share/plasma/plasmoids/org.kde.plasma.kickoff/contents/ui
   curl -o /usr/share/plasma/plasmoids/org.kde.plasma.kickoff/contents/ui/main.qml https://raw.githubusercontent.com/DevByte1328/arch-install/refs/heads/master/conf/main.qml
